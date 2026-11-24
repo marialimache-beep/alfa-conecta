@@ -1,0 +1,453 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>ALFA Conecta</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: barra de roles arriba (como un POS), cada rol es una vista de trabajo a pantalla completa */
+:root{
+  --bg:#f6ede4; --panel:#fffaf5; --ink:#2a1d17; --muted:#7a6558; --line:#e6d6c8;
+  --brand:#b8322b; --brand-ink:#fff; --copper:#b9805a; --cream:#efe0d2;
+  --ok:#2f7d4f; --warn:#c07a12; --bad:#b8322b; --chat:#e7f6dc; --chatbg:#efe7dd;
+  --f-display:"Alfa Slab One", "Rockwell", Georgia, serif;
+  --f-body:"Archivo", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1c1411; --panel:#271c17; --ink:#f3e6da; --muted:#bba597; --line:#3d2d25;
+  --brand:#d4493f; --brand-ink:#fff; --copper:#d39a72; --cream:#33251e;
+  --ok:#5bbd83; --warn:#e0a03a; --bad:#e2584d; --chat:#2f4a2a; --chatbg:#211915; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1c1411; --panel:#271c17; --ink:#f3e6da; --muted:#bba597; --line:#3d2d25;
+  --brand:#d4493f; --brand-ink:#fff; --copper:#d39a72; --cream:#33251e;
+  --ok:#5bbd83; --warn:#e0a03a; --bad:#e2584d; --chat:#2f4a2a; --chatbg:#211915; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--brand)}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--brand);color:var(--brand-ink);
+  padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.brandrow{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.logo{font-family:var(--f-display);font-size:26px;letter-spacing:1px}
+.logo small{font-family:var(--f-body);font-weight:700;font-size:10px;letter-spacing:3px;display:block;margin-top:-4px}
+.sub{opacity:.85;font-size:13px}
+.syncpill{margin-left:auto;font-size:12px;background:rgba(255,255,255,.16);padding:3px 10px;border-radius:99px}
+nav.roles{display:flex;gap:6px;overflow-x:auto;margin-top:10px;scrollbar-width:none}
+nav.roles button{flex:none;font:600 13px var(--f-body);color:var(--brand-ink);background:rgba(255,255,255,.12);border:0;border-radius:8px;padding:8px 12px;cursor:pointer}
+nav.roles button[aria-current="true"]{background:var(--panel);color:var(--brand)}
+nav.roles .badge{background:#fff;color:var(--brand);border-radius:99px;padding:0 6px;margin-left:6px;font-size:11px}
+main{padding-block:18px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1200px;margin:0 auto}
+h1,h2,h3{text-wrap:balance;margin:0}
+h1{font-family:var(--f-display);font-weight:400;font-size:24px;letter-spacing:.3px}
+h2{font-size:16px;font-weight:700}
+.lead{color:var(--muted);margin:4px 0 16px;max-width:70ch}
+.grid2{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px}
+@media (max-width:820px){.grid2{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
+.panel>h2{margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.eyebrow{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--copper);font-weight:700}
+button.btn{font:600 14px var(--f-body);border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:8px 12px;cursor:pointer}
+button.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+button.btn.ghost{background:transparent}
+button.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--copper);outline-offset:2px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+label.f{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:13px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;padding:5px 11px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tag{display:inline-block;font-size:11px;font-weight:700;border-radius:4px;padding:1px 6px;background:var(--cream);color:var(--ink)}
+.tag.alert{background:var(--bad);color:#fff}
+.tag.ok{background:var(--ok);color:#fff}
+.tag.warn{background:var(--warn);color:#fff}
+.tag.ex{background:transparent;border:1px dashed var(--muted);color:var(--muted)}
+.muted{color:var(--muted)}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+/* Mesas grid */
+.mesas{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.mesa{position:relative;text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px;cursor:pointer;color:var(--ink);font:inherit;min-height:84px}
+.mesa b{font-family:var(--f-display);font-weight:400;font-size:20px}
+.mesa .st{font-size:12px;color:var(--muted)}
+.mesa.ocupada{border-color:var(--copper);background:var(--cream)}
+.mesa.sel{outline:3px solid var(--brand)}
+.mesa .bell{position:absolute;top:8px;right:8px;background:var(--bad);color:#fff;font-size:11px;font-weight:700;border-radius:99px;padding:2px 7px;animation:pulse 1.2s infinite}
+@keyframes pulse{50%{opacity:.55}}
+@media (prefers-reduced-motion:reduce){.mesa .bell{animation:none}}
+.items{display:grid;gap:6px;margin-top:8px}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 8px;align-items:center;border-bottom:1px dashed var(--line);padding-bottom:6px}
+.item .meta{font-size:12px;color:var(--muted)}
+.carta{max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:8px}
+.carta button{display:flex;justify-content:space-between;gap:8px;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--line);padding:8px 10px;color:var(--ink);font:inherit;cursor:pointer}
+.carta button:disabled{opacity:.4;cursor:not-allowed}
+.carta .cat{position:sticky;top:0;background:var(--panel);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--copper);font-weight:700;padding:6px 10px;border-bottom:1px solid var(--line)}
+.stockpill{font-size:12px;font-weight:700}
+/* Cocina */
+.kds{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.ticket{background:var(--panel);border:1px solid var(--line);border-top:6px solid var(--ok);border-radius:10px;padding:12px;display:grid;gap:8px}
+.ticket.w2{border-top-color:var(--warn)} .ticket.w3{border-top-color:var(--bad)}
+.ticket header{display:flex;justify-content:space-between;align-items:baseline}
+.ticket header b{font-family:var(--f-display);font-weight:400;font-size:20px}
+.ck{display:flex;gap:6px;align-items:center;font-size:13px}
+.ck input{width:auto}
+.stockrow{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.stockrow .num{min-width:2.5ch;text-align:center;font-size:18px}
+/* Botón de llamado */
+.tables{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.device{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;justify-items:center;gap:10px;text-align:center}
+.device .puck{width:96px;height:96px;border-radius:50%;border:0;background:radial-gradient(circle at 35% 30%,#4a3a33,#1a1210);box-shadow:0 6px 0 #000,0 0 0 6px var(--cream);display:grid;place-items:center;cursor:pointer}
+.device .puck span{width:54px;height:54px;border-radius:50%;background:var(--brand);box-shadow:inset 0 -4px 0 rgba(0,0,0,.3);display:grid;place-items:center;color:#fff;font-family:var(--f-display);font-size:13px}
+.device .puck:active{transform:translateY(3px);box-shadow:0 3px 0 #000,0 0 0 6px var(--cream)}
+.device.on .puck span{background:var(--warn)}
+/* Chat WhatsApp */
+.phone{max-width:380px;margin:0 auto;border:10px solid #111;border-radius:30px;overflow:hidden;background:var(--chatbg);display:grid;grid-template-rows:auto 1fr auto;height:600px}
+.phone .wahead{background:#075e54;color:#fff;padding:10px 12px;display:flex;gap:10px;align-items:center}
+.phone .wahead .av{width:34px;height:34px;border-radius:50%;background:var(--brand);display:grid;place-items:center;font-family:var(--f-display);font-size:12px}
+.msgs{overflow-y:auto;padding:12px;display:grid;gap:8px;align-content:start}
+.bubble{max-width:85%;padding:8px 10px;border-radius:10px;font-size:14px;white-space:pre-line;background:var(--panel);box-shadow:0 1px 0 rgba(0,0,0,.08)}
+.bubble.me{justify-self:end;background:var(--chat)}
+.qr{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border-top:1px solid var(--line);background:var(--panel)}
+.qr button{border:1px solid #128c7e;color:#128c7e;background:transparent;border-radius:99px;padding:5px 10px;font:600 13px var(--f-body);cursor:pointer}
+.qr form{display:flex;gap:6px;width:100%}
+/* Evaluación */
+.scale{display:flex;flex-wrap:wrap;gap:4px}
+.scale button{min-width:36px;padding:6px 0;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;font:600 14px var(--f-mono);cursor:pointer}
+.scale button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.kpi{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg)}
+.kpi .v{font-family:var(--f-display);font-size:26px}
+.kpi .l{font-size:12px;color:var(--muted)}
+/* Wallet */
+.wallet{border-radius:16px;padding:18px;color:#f5e9d8;background:linear-gradient(150deg,#2b1a14 0%,#120b08 70%);box-shadow:0 10px 30px rgba(0,0,0,.25);display:grid;gap:14px;max-width:360px}
+.wallet .wtop{display:flex;justify-content:space-between;align-items:flex-start}
+.wallet .wl{font-family:var(--f-display);font-size:22px;color:#e9b98c}
+.dots{display:flex;gap:8px}
+.dots i{width:34px;height:34px;border-radius:50%;border:2px solid #e9b98c;display:grid;place-items:center;font-style:normal;font-size:12px}
+.dots i.on{background:#e9b98c;color:#1a100c;font-weight:700}
+.wallet .bar{height:44px;background:repeating-linear-gradient(90deg,#f5e9d8 0 2px,transparent 2px 4px,#f5e9d8 4px 5px,transparent 5px 8px);border-radius:4px;opacity:.85}
+table.t{border-collapse:collapse;width:100%;font-size:13px}
+table.t th,table.t td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+table.t th{background:var(--cream)}
+.scroll{overflow-x:auto}
+ol.steps{margin:0;padding-left:20px;display:grid;gap:6px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;z-index:20}
+.empty{border:1px dashed var(--line);border-radius:10px;padding:18px;color:var(--muted);text-align:center}
+</style>
+
+<header class="top">
+  <div class="brandrow">
+    <div class="logo">ALFA<small>STEAKHOUSE</small></div>
+    <div class="sub">ALFA Conecta · prototipo del sistema de servicio</div>
+    <div class="syncpill" id="sync">Modo demostración</div>
+  </div>
+  <nav class="roles" id="roles" aria-label="Vistas"></nav>
+</header>
+<main id="app"></main>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ===================== DATOS DE LA CARTA (noviembre) ===================== */
+const CARTA = [
+ {cat:"Entradas", items:[["Yuke coreano",55],["Carpaccio ALFA",49],["Tacos",49],["Mollejas parrilleras",45],["Anticucho ALFA",39],["Tapas de osobuco",32],["Empanadas argentinas",32],["Tapas de lomo",28],["Duo de chorizos",25]]},
+ {cat:"BBQ de altura", items:[["Bandeja de altura",189,1,1],["Smoked brisket USA",89,0,1],["Costillas ahumadas de cerdo",95,0,1],["Costillón de res ahumado",64,0,1],["Caja china",54],["Pollo cajún ahumado",49,0,1]]},
+ {cat:"Cortes", items:[["Tomahawk (700 g)",99,1,1],["T-bone nacional (500 g)",79,1],["Picanha nacional (500 g)",89,1],["Picanha Angus (400 g)",149,1],["Bife ancho Angus (400 g)",189,1],["Bife ancho argentino (250 g)",119,1],["Entraña fina argentina (200 g)",89,1],["Lomo fino nacional (220 g)",49,1],["Asado de tira (350 g)",65,1]]},
+ {cat:"Parrillas", items:[["Personal de res",40,1],["Personal de cerdo",42],["Familiar de res",149,1],["Peruana",119],["Importada argentina",279,1]]},
+ {cat:"Experiencias", items:[["T-bone flambeado (500 g)",99,1],["Hibachi nacional x2",130,1]]},
+ {cat:"Burgers", items:[["Signature",41,1],["Full bacon cheese",45,1],["Gochu smoke",41,1]]},
+ {cat:"Fondos", items:[["Peper steak",65,1],["Lomo saltado",59],["Milanesa provenzal a lo pobre",49],["Ensalada ALFA",45]]},
+ {cat:"Bebidas", items:[["Pisco sour",28],["Chilcano clásico",27],["Mojito clásico",27],["Sangría ALFA",28],["Limonada ALFA",14],["Copa de vino",0]]}
+];
+// [nombre, precio, requiereTermino, estrella]
+const TERMINOS=["Azul","Jugoso","Medio","Tres cuartos","Bien cocido"];
+const ALERGIAS=["Frutos secos","Lácteos","Gluten","Mariscos","Ají / picante"];
+const PAGOS=["Efectivo","Tarjeta","Yape / Plin"];
+const PROMOS=["Ninguna","BBVA","Interbank","BCP","Scotiabank"];
+const MESAS=[...Array(12)].map((_,i)=>({id:"m"+(i+1),n:i+1,zona:i<8?"Salón":"Terraza"}));
+const ESTRELLAS=CARTA.flatMap(c=>c.items.filter(x=>x[3]).map(x=>x[0]));
+const findPlato=n=>{for(const c of CARTA)for(const x of c.items)if(x[0]===n)return x;return null};
+
+/* ===================== ESTADO + ALMACÉN ===================== */
+const S={mesas:{},stock:{},llamados:[],reservas:[],evals:[],club:[]};
+let db=null, live=false;
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const now=()=>Date.now();
+const mins=t=>Math.max(0,Math.floor((now()-t)/60000));
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,2200)}
+
+// Ejemplo local (solo si no hay almacén compartido)
+function demoSeed(){
+  ESTRELLAS.forEach((n,i)=>S.stock[n]=[3,6,8,5,2,7,4][i%7]);
+  S.mesas.m3={personas:4,nombre:"Familia Torres (ejemplo)",reserva:true,ocasion:"Cumpleaños",alergias:["Frutos secos"],pago:"Tarjeta",promo:"BBVA",bienvenida:{nombre:true,mesa:true,sshh:true,stock:true,pago:true},
+    items:[{id:"a1",plato:"Tomahawk (700 g)",termino:"Medio",estado:"enviado",ts:now()-14*60000},{id:"a2",plato:"Pisco sour",estado:"servido",ts:now()-20*60000}],ejemplo:true};
+  S.mesas.m9={personas:2,nombre:"Sin reserva",reserva:false,ocasion:"",alergias:[],pago:"Yape / Plin",promo:"Ninguna",bienvenida:{nombre:true,mesa:true},items:[{id:"b1",plato:"Smoked brisket USA",estado:"enviado",ts:now()-4*60000}],ejemplo:true};
+  S.llamados=[{id:"l1",mesa:"m9",ts:now()-60000,estado:"pendiente",ejemplo:true}];
+  S.reservas=[{id:"r1",tipo:"Empresa",nombre:"Minera Andina (ejemplo)",celular:"9XX XXX XXX",dia:"Viernes",hora:"20:00",personas:8,ocasion:"Reunión de trabajo",zona:"Salón",alergias:"Ninguna",adelanto:true,ejemplo:true}];
+  S.evals=[{id:"e1",csat:5,nps:10,acceso:3,problema:false,comentario:"Excelente brisket (ejemplo)",ejemplo:true},{id:"e2",csat:4,nps:8,acceso:2,problema:true,sol:4,comentario:"Demoró la cuenta (ejemplo)",ejemplo:true}];
+  S.club=[{id:"c1",empresa:"Estudio Contable Misti (ejemplo)",contacto:"R. Paredes",celular:"9XX XXX XXX",visitas:4,ejemplo:true}];
+}
+
+// Escrituras: compartidas si hay db, locales si no
+async function saveMesa(id,data){ if(live){try{ if(data) await db.doc("mesas/"+id).set(data); else await db.doc("mesas/"+id).delete(); }catch(e){toast("No se pudo guardar: "+(e.code||"error"));} } else { if(data) S.mesas[id]=data; else delete S.mesas[id]; render(); } }
+async function saveStock(){ if(live){try{await db.doc("stock/hoy").set({items:{...S.stock}})}catch(e){toast("No se pudo guardar el stock")}} else render(); }
+async function addTo(col,arr,obj){ obj.ts=obj.ts||now(); if(live){try{await db.collection(col).add(obj)}catch(e){toast("No se pudo guardar")}} else {obj.id=Math.random().toString(36).slice(2,8);S[arr].unshift(obj);render();} }
+async function updateIn(col,arr,id,patch){ if(live){try{await db.doc(col+"/"+id).update(patch)}catch(e){toast("No se pudo guardar")}} else {const o=S[arr].find(x=>x.id===id);Object.assign(o,patch);render();} }
+
+async function connect(){
+  try{ db = await (window.claude && window.claude.use ? window.claude.use("db") : null); }catch(e){ db=null; }
+  if(!db){ return; }
+  live=true; for(const k of ["mesas","llamados","reservas","evals","club"]) S[k]=k==="mesas"?{}:[]; S.stock={};
+  document.getElementById("sync").textContent="Conectando…";
+  const t=setTimeout(()=>{document.getElementById("sync").textContent="Sin conexión al almacén"},10000);
+  const ok=()=>{clearTimeout(t);document.getElementById("sync").textContent="● Sincronizado en vivo";};
+  const err=()=>{document.getElementById("sync").textContent="Error de conexión";};
+  db.collection("mesas").onSnapshot(s=>{ok();S.mesas={};s.docs.forEach(d=>S.mesas[d.id]=d.data());render()},err);
+  db.doc("stock/hoy").onSnapshot(d=>{ok();S.stock={...((d.exists&&d.data().items)||{})};render()},err);
+  for(const [col,arr] of [["llamados","llamados"],["reservas","reservas"],["evaluaciones","evals"],["club","club"]]){
+    db.collection(col).orderBy("ts","desc").limit(200).onSnapshot(s=>{ok();S[arr]=s.docs.map(d=>({id:d.id,...d.data()}));render()},err);
+  }
+}
+
+/* ===================== VISTAS ===================== */
+const VIEWS=[["reservas","Reservas WhatsApp"],["mesero","Mesero (tablet)"],["cocina","Cocina (pantalla)"],["mesa","Botón de mesa"],["evaluacion","Hoja de evaluación"],["club","Club ALFA"],["protocolos","Protocolos"]];
+let view=(location.hash||"#mesero").slice(1); if(!VIEWS.some(v=>v[0]===view)) view="mesero";
+let selMesa="m3";
+window.addEventListener("hashchange",()=>{const v=location.hash.slice(1);if(VIEWS.some(x=>x[0]===v)){view=v;render()}});
+
+function renderNav(){
+  const pend=S.llamados.filter(l=>l.estado==="pendiente").length;
+  const kitchen=Object.values(S.mesas).reduce((a,m)=>a+(m.items||[]).filter(i=>i.estado==="enviado").length,0);
+  document.getElementById("roles").innerHTML=VIEWS.map(([k,l])=>`<button data-v="${k}" aria-current="${k===view}">${l}${k==="mesero"&&pend?`<span class="badge">${pend}</span>`:""}${k==="cocina"&&kitchen?`<span class="badge">${kitchen}</span>`:""}</button>`).join("");
+}
+document.getElementById("roles").addEventListener("click",e=>{const b=e.target.closest("button[data-v]");if(!b)return;location.hash=b.dataset.v;view=b.dataset.v;render()});
+
+function render(){ renderNav(); const app=document.getElementById("app"); const keep=captureInputs(); app.innerHTML=({reservas:vReservas,mesero:vMesero,cocina:vCocina,mesa:vMesa,evaluacion:vEval,club:vClub,protocolos:vProt})[view](); restoreInputs(keep); if(view==="reservas") scrollChat(); }
+function captureInputs(){const o={};document.querySelectorAll("#app [data-keep]").forEach(el=>o[el.id]=el.value);const a=document.activeElement;return {o,focus:a&&a.id}}
+function restoreInputs(k){for(const id in k.o){const el=document.getElementById(id);if(el)el.value=k.o[id]} if(k.focus){const f=document.getElementById(k.focus);if(f)f.focus()}}
+
+/* ---------- 1. Reservas por WhatsApp (agente) ---------- */
+const FLOW=[
+ {k:"tipo",q:"¡Hola! Bienvenido a ALFA Steakhouse 🔥\nPara ayudarte con tu reserva, ¿para quién es?",opts:["Familia","Pareja","Grupo de amigos","Empresa"]},
+ {k:"nombre",q:"¿A nombre de quién registramos la reserva?",input:"Nombre y apellido"},
+ {k:"celular",q:"¿Cuál es tu número de contacto?",input:"Celular"},
+ {k:"dia",q:"¿Qué día deseas venir?",opts:["Hoy","Mañana","Viernes","Sábado","Domingo"]},
+ {k:"hora",q:"¿A qué hora?",opts:["13:00","14:00","19:30","20:00","21:00"]},
+ {k:"personas",q:"¿Cuántas personas serán?",opts:["2","3","4","6","8","10+"]},
+ {k:"ocasion",q:"¿Celebran algo especial?",opts:["Cumpleaños","Aniversario","Reunión de trabajo","Ninguna"]},
+ {k:"zona",q:"¿Prefieren salón o terraza?",opts:["Salón","Terraza","Me es indiferente"]},
+ {k:"alergias",q:"¿Alguien tiene alguna alergia o requerimiento especial?",opts:["Ninguna","Frutos secos","Lácteos","Gluten","Otra"]},
+];
+let chat={step:0,data:{},log:[]};
+function chatStart(){chat={step:0,data:{},log:[{me:false,t:FLOW[0].q}]}}
+chatStart();
+function politicas(d){
+  const grupo=d.tipo==="Empresa"||d.personas==="8"||d.personas==="10+"||d.personas==="6";
+  return `Antes de confirmar, toma en cuenta:\n• Tolerancia: tu mesa se mantiene 15 minutos después de la hora reservada.\n• Cambios o cancelación: avísanos con 3 horas de anticipación.\n${grupo?"• Por ser grupo o reserva corporativa, se solicita un adelanto por Yape o Plin que se descuenta de tu cuenta.":"• No se requiere adelanto para tu reserva."}\n¿Confirmamos?`;
+}
+function chatAnswer(v){
+  const f=FLOW[chat.step]; chat.log.push({me:true,t:v}); chat.data[f.k]=v; chat.step++;
+  if(chat.step<FLOW.length){ chat.log.push({me:false,t:FLOW[chat.step].q}); }
+  else { chat.log.push({me:false,t:politicas(chat.data)}); }
+  render();
+}
+async function chatConfirm(){
+  const d=chat.data; const grupo=d.tipo==="Empresa"||["6","8","10+"].includes(d.personas);
+  chat.log.push({me:true,t:"Sí, confirmar"});
+  const stock=S.stock["Tomahawk (700 g)"];
+  chat.log.push({me:false,t:`¡Listo, ${d.nombre}! ✅\nTu mesa para ${d.personas} personas queda reservada el ${d.dia} a las ${d.hora} en ${d.zona.toLowerCase()}.\nAnotamos: ${d.ocasion!=="Ninguna"?d.ocasion+" · ":""}alergias: ${d.alergias}.\n${stock!=null?`Hoy quedan ${stock} Tomahawk ahumados. ¿Deseas que te apartemos uno al llegar?`:""}\nUbicación: Las Orquídeas 106, Cayma.`});
+  chat.step=FLOW.length+1; render();
+  await addTo("reservas","reservas",{...d,personas:d.personas,adelanto:grupo});
+  toast("Reserva registrada en el sistema");
+}
+function scrollChat(){const m=document.querySelector(".msgs");if(m)m.scrollTop=m.scrollHeight}
+function vReservas(){
+  const f=FLOW[chat.step];
+  let qr="";
+  if(chat.step<FLOW.length){
+    qr = f.opts ? f.opts.map(o=>`<button data-qr="${esc(o)}">${esc(o)}</button>`).join("") :
+      `<form id="chatf"><input id="chatin" data-keep placeholder="${esc(f.input)}" autocomplete="off" required><button class="btn primary" type="submit">Enviar</button></form>`;
+  } else if(chat.step===FLOW.length){ qr=`<button data-confirm>Sí, confirmar</button><button data-restart>Empezar de nuevo</button>`; }
+  else qr=`<button data-restart>Nueva reserva</button>`;
+  const list=S.reservas.length?`<div class="scroll"><table class="t"><tr><th>Titular</th><th>Tipo</th><th>Día y hora</th><th>Pers.</th><th>Ocasión</th><th>Zona</th><th>Alergias</th><th>Adelanto</th><th></th></tr>${S.reservas.map(r=>`<tr><td>${esc(r.nombre)} ${r.ejemplo?'<span class="tag ex">ejemplo</span>':""}<div class="muted num">${esc(r.celular)}</div></td><td>${esc(r.tipo)}</td><td>${esc(r.dia)} ${esc(r.hora)}</td><td class="num">${esc(r.personas)}</td><td>${esc(r.ocasion)}</td><td>${esc(r.zona)}</td><td>${r.alergias&&r.alergias!=="Ninguna"?`<span class="tag alert">${esc(r.alergias)}</span>`:"—"}</td><td>${r.adelanto?'<span class="tag warn">Sí</span>':"No"}</td><td>${r.mesa?`Mesa ${esc(r.mesa.slice(1))}`:`<select id="as_${esc(r.id)}" data-asig="${esc(r.id)}" aria-label="Asignar mesa"><option value="">Asignar mesa</option>${MESAS.filter(m=>!S.mesas[m.id]).map(m=>`<option value="${m.id}">Mesa ${m.n} · ${m.zona}</option>`).join("")}</select>`}</td></tr>`).join("")}</table></div>`:`<div class="empty">Aún no hay reservas. Completa el chat de la izquierda para registrar la primera.</div>`;
+  return `<h1>Agente de reservas por WhatsApp</h1><p class="lead">El cliente reserva en pocos toques. El agente pregunta tipo de cliente, titular, celular, día, hora, personas, ocasión, zona y alergias, e informa la tolerancia, las políticas y el adelanto. Cada reserva confirmada aparece en el sistema y se asigna a una mesa.</p>
+  <div class="grid2"><div class="phone" role="region" aria-label="Simulación de WhatsApp"><div class="wahead"><div class="av">ALFA</div><div><b>ALFA Steakhouse</b><div style="font-size:12px;opacity:.8">Cuenta de empresa</div></div></div>
+  <div class="msgs">${chat.log.map(m=>`<div class="bubble ${m.me?"me":""}">${esc(m.t)}</div>`).join("")}</div><div class="qr">${qr}</div></div>
+  <div class="panel"><h2>Reservas registradas <span class="tag">${S.reservas.length}</span></h2>${list}</div></div>`;
+}
+document.addEventListener("click",e=>{
+  const q=e.target.closest("[data-qr]"); if(q){chatAnswer(q.dataset.qr);return}
+  if(e.target.closest("[data-confirm]")){chatConfirm();return}
+  if(e.target.closest("[data-restart]")){chatStart();render();return}
+});
+document.addEventListener("submit",e=>{ if(e.target.id==="chatf"){e.preventDefault();const v=document.getElementById("chatin").value.trim();if(v){document.getElementById("chatin").value="";chatAnswer(v)}} });
+document.addEventListener("change",e=>{
+  const s=e.target.closest("[data-asig]"); if(s&&s.value){
+    const r=S.reservas.find(x=>x.id===s.dataset.asig); if(!r) return;
+    saveMesa(s.value,{personas:parseInt(r.personas)||2,nombre:r.nombre,reserva:true,ocasion:r.ocasion==="Ninguna"?"":r.ocasion,alergias:r.alergias&&r.alergias!=="Ninguna"?[r.alergias]:[],pago:"",promo:"Ninguna",bienvenida:{},items:[],tipo:r.tipo,ts:now()});
+    updateIn("reservas","reservas",r.id,{mesa:s.value}); toast("Mesa preparada con los datos de la reserva");
+  }
+});
+
+/* ---------- 2. Mesero (tablet) ---------- */
+function vMesero(){
+  const pend=S.llamados.filter(l=>l.estado==="pendiente");
+  const m=S.mesas[selMesa]; const meta=MESAS.find(x=>x.id===selMesa);
+  const grid=MESAS.map(x=>{const o=S.mesas[x.id];const call=pend.some(l=>l.mesa===x.id);const listos=o?(o.items||[]).filter(i=>i.estado==="listo").length:0;
+    return `<button class="mesa ${o?"ocupada":""} ${x.id===selMesa?"sel":""}" data-mesa="${x.id}"><b>${x.n}</b> <span class="muted" style="font-size:12px">${x.zona}</span>${call?'<span class="bell">LLAMA</span>':""}<div class="st">${o?`${o.personas} pers. · ${esc(o.nombre||"")}`:"Libre"}</div>${listos?`<div><span class="tag ok">${listos} listo(s) para servir</span></div>`:""}</button>`}).join("");
+  const calls=pend.length?pend.map(l=>`<div class="row" style="justify-content:space-between;border-bottom:1px solid var(--line);padding:6px 0"><span><b>Mesa ${esc(l.mesa.slice(1))}</b> llamó hace <span class="num">${mins(l.ts)}</span> min ${l.ejemplo?'<span class="tag ex">ejemplo</span>':""}</span><button class="btn primary" data-atender="${esc(l.id)}">Voy en camino</button></div>`).join(""):`<p class="muted">Sin llamados pendientes. Cuando un cliente presione el botón de su mesa, aparecerá aquí.</p>`;
+  return `<h1>Ficha por mesa</h1><p class="lead">Todos los meseros ven la misma información. Si cambia el turno o el mozo está ocupado, cualquiera puede atender la mesa sin repetir preguntas.</p>
+  <div class="panel" style="margin-bottom:16px"><h2>🔔 Llamados de mesa <span class="tag ${pend.length?"alert":""}">${pend.length}</span></h2>${calls}</div>
+  <div class="grid2"><div class="panel"><h2>Salón y terraza</h2><div class="mesas">${grid}</div></div>
+  <div class="panel">${m?ficha(selMesa,m,meta):`<h2>Mesa ${meta.n} · ${meta.zona}</h2><p class="muted">Mesa libre. Ábrela cuando llegue un cliente sin reserva; las mesas con reserva se preparan desde la vista Reservas.</p><button class="btn primary" data-abrir="${selMesa}">Abrir mesa (sin reserva)</button>`}</div></div>`;
+}
+function ficha(id,m,meta){
+  const bv=m.bienvenida||{};
+  const pasos=[["nombre","Me presenté por mi nombre"],["mesa","Indiqué el n.° de mesa"],["sshh","Indiqué los servicios higiénicos"],["stock","Informé el stock del plato estrella"],["pago","Pregunté medio de pago y promoción"]];
+  const items=(m.items||[]).map(i=>`<div class="item"><div><b>${esc(i.plato)}</b>${i.termino?` · <span class="tag">${esc(i.termino)}</span>`:""}<div class="meta">${i.estado==="nuevo"?"Por enviar":i.estado==="enviado"?`En cocina · ${mins(i.ts)} min`:i.estado==="listo"?"✔ Listo y verificado por cocina":"Servido"}</div></div><div>${i.estado==="nuevo"?`<button class="btn ghost" data-quitar="${esc(i.id)}" aria-label="Quitar">✕</button>`:i.estado==="listo"?`<button class="btn" data-servir="${esc(i.id)}">Servido</button>`:""}</div></div>`).join("")||`<p class="muted">Aún no hay pedido.</p>`;
+  const nuevos=(m.items||[]).filter(i=>i.estado==="nuevo").length;
+  const cartaHtml=CARTA.map(c=>`<div class="cat">${c.cat}</div>${c.items.map(x=>{const st=S.stock[x[0]];const agot=st===0;return `<button data-add="${esc(x[0])}" ${agot?"disabled":""}><span>${esc(x[0])}${x[2]?' <span class="muted" style="font-size:12px">· término</span>':""}</span><span>${st!=null?`<span class="stockpill" style="color:${agot?"var(--bad)":st<=3?"var(--warn)":"var(--ok)"}">${agot?"Agotado":"Quedan "+st}</span> `:""}<span class="num muted">${x[1]?"S/"+x[1]:""}</span></span></button>`}).join("")}`).join("");
+  return `<div class="row" style="justify-content:space-between"><h2>Mesa ${meta.n} · ${meta.zona}</h2>${m.ejemplo?'<span class="tag ex">ejemplo</span>':""}</div>
+  <div class="row" style="margin:6px 0 10px"><span class="tag">${m.reserva?"Con reserva":"Sin reserva"}</span>${m.tipo?`<span class="tag">${esc(m.tipo)}</span>`:""}<b>${esc(m.nombre||"")}</b></div>
+  <div class="row" style="gap:12px;align-items:end">
+    <label class="f" style="width:90px">Personas<input id="f_pers" type="number" min="1" value="${esc(m.personas)}" data-campo="personas"></label>
+    <label class="f" style="flex:1;min-width:140px">Ocasión<input id="f_oc" value="${esc(m.ocasion||"")}" data-campo="ocasion" placeholder="Cumpleaños, trabajo…"></label>
+  </div>
+  <p class="eyebrow" style="margin:12px 0 6px">Alergias de la mesa (obligatorio)</p>
+  <div class="chips">${["Ninguna",...ALERGIAS].map(a=>`<button class="chip" data-alerg="${esc(a)}" aria-pressed="${(m.alergias||[]).includes(a)||(a==="Ninguna"&&m.alergiasOk&&!(m.alergias||[]).length)}">${esc(a)}</button>`).join("")}</div>
+  <p class="eyebrow" style="margin:12px 0 6px">Medio de pago y promoción</p>
+  <div class="chips">${PAGOS.map(p=>`<button class="chip" data-pago="${esc(p)}" aria-pressed="${m.pago===p}">${esc(p)}</button>`).join("")}</div>
+  <div class="chips" style="margin-top:6px">${PROMOS.map(p=>`<button class="chip" data-promo="${esc(p)}" aria-pressed="${m.promo===p}">${p==="Ninguna"?"Sin promoción":"Promo "+esc(p)}</button>`).join("")}</div>
+  <p class="eyebrow" style="margin:12px 0 6px">Protocolo de bienvenida</p>
+  <div style="display:grid;gap:4px">${pasos.map(([k,l])=>`<label class="ck"><input type="checkbox" data-bv="${k}" ${bv[k]?"checked":""}> ${l}</label>`).join("")}</div>
+  <p class="eyebrow" style="margin:12px 0 6px">Pedido</p><div class="items">${items}</div>
+  <details style="margin-top:10px"><summary class="btn" style="display:inline-block">+ Agregar de la carta</summary><div style="margin-top:8px"><label class="f">Término para cortes<select id="f_term" data-keep>${TERMINOS.map(t=>`<option>${t}</option>`).join("")}</select></label><div class="carta" style="margin-top:8px">${cartaHtml}</div></div></details>
+  <div class="row" style="margin-top:12px;justify-content:space-between"><button class="btn primary" data-enviar ${nuevos&&(m.alergiasOk||(m.alergias||[]).length)?"":"disabled"}>Enviar a cocina (${nuevos})</button><button class="btn ghost" data-cerrar>Cerrar mesa</button></div>
+  ${nuevos&&!(m.alergiasOk||(m.alergias||[]).length)?`<p class="muted" style="font-size:13px">Marca las alergias (o «Ninguna») para poder enviar el pedido.</p>`:""}`;
+}
+function curMesa(){return JSON.parse(JSON.stringify(S.mesas[selMesa]||{}))}
+document.addEventListener("click",e=>{
+  if(view!=="mesero") return;
+  const t=e.target;
+  const mb=t.closest("[data-mesa]"); if(mb){selMesa=mb.dataset.mesa;render();return}
+  if(t.closest("[data-abrir]")){saveMesa(selMesa,{personas:2,nombre:"Sin reserva",reserva:false,ocasion:"",alergias:[],pago:"",promo:"Ninguna",bienvenida:{},items:[],ts:now()});return}
+  const at=t.closest("[data-atender]"); if(at){updateIn("llamados","llamados",at.dataset.atender,{estado:"atendido",atendido:now()});toast("El cliente verá «Mesero en camino»");return}
+  const m=S.mesas[selMesa]; if(!m) return; const c=curMesa();
+  const al=t.closest("[data-alerg]"); if(al){const a=al.dataset.alerg; if(a==="Ninguna"){c.alergias=[];c.alergiasOk=true}else{c.alergias=c.alergias||[];c.alergias=c.alergias.includes(a)?c.alergias.filter(x=>x!==a):[...c.alergias,a];c.alergiasOk=true} saveMesa(selMesa,c);return}
+  const pg=t.closest("[data-pago]"); if(pg){c.pago=pg.dataset.pago;saveMesa(selMesa,c);return}
+  const pr=t.closest("[data-promo]"); if(pr){c.promo=pr.dataset.promo;saveMesa(selMesa,c);return}
+  const ad=t.closest("[data-add]"); if(ad){const p=findPlato(ad.dataset.add);const term=p&&p[2]?document.getElementById("f_term").value:"";c.items=c.items||[];c.items.push({id:Math.random().toString(36).slice(2,8),plato:ad.dataset.add,termino:term,estado:"nuevo"});saveMesa(selMesa,c);toast("Agregado: "+ad.dataset.add);return}
+  const q=t.closest("[data-quitar]"); if(q){c.items=c.items.filter(i=>i.id!==q.dataset.quitar);saveMesa(selMesa,c);return}
+  const sv=t.closest("[data-servir]"); if(sv){c.items.forEach(i=>{if(i.id===sv.dataset.servir)i.estado="servido"});saveMesa(selMesa,c);return}
+  if(t.closest("[data-enviar]")){let used=false;c.items.forEach(i=>{if(i.estado==="nuevo"){i.estado="enviado";i.ts=now();if(S.stock[i.plato]!=null){S.stock[i.plato]=Math.max(0,S.stock[i.plato]-1);used=true}}});saveMesa(selMesa,c);if(used)saveStock();toast("Pedido enviado a la pantalla de cocina");return}
+  if(t.closest("[data-cerrar]")){saveMesa(selMesa,null);toast("Mesa cerrada. Entrega la hoja de evaluación con la cuenta.");return}
+});
+document.addEventListener("change",e=>{
+  if(view!=="mesero"||!S.mesas[selMesa]) return; const c=curMesa();
+  const b=e.target.closest("[data-bv]"); if(b){c.bienvenida=c.bienvenida||{};c.bienvenida[b.dataset.bv]=b.checked;saveMesa(selMesa,c);return}
+  const f=e.target.closest("[data-campo]"); if(f){c[f.dataset.campo]=f.type==="number"?parseInt(f.value)||1:f.value;saveMesa(selMesa,c)}
+});
+
+/* ---------- 3. Cocina (pantalla) ---------- */
+let ctrl={};
+function vCocina(){
+  const tickets=[];
+  for(const [id,m] of Object.entries(S.mesas)){(m.items||[]).forEach(i=>{if(i.estado==="enviado")tickets.push({mesa:id,m,i})})}
+  tickets.sort((a,b)=>a.i.ts-b.i.ts);
+  const kds=tickets.length?tickets.map(({mesa,m,i})=>{const w=mins(i.ts);const key=mesa+i.id;const c=ctrl[key]||{};const needT=!!i.termino;const ready=(!needT||c.t)&&c.temp&&c.al;
+    return `<article class="ticket ${w>=20?"w3":w>=12?"w2":""}"><header><b>Mesa ${esc(mesa.slice(1))}</b><span class="num">${w} min</span></header>
+    <div><b>${esc(i.plato)}</b>${i.termino?` · <span class="tag">${esc(i.termino)}</span>`:""}</div>
+    <div>${(m.alergias||[]).length?(m.alergias||[]).map(a=>`<span class="tag alert">⚠ ${esc(a)}</span>`).join(" "):'<span class="tag">Sin alergias</span>'}</div>
+    <div class="eyebrow">Control antes de servir</div>
+    ${needT?`<label class="ck"><input type="checkbox" data-ck="${esc(key)}|t" ${c.t?"checked":""}> Término verificado con termómetro</label>`:""}
+    <label class="ck"><input type="checkbox" data-ck="${esc(key)}|temp" ${c.temp?"checked":""}> Temperatura y presentación</label>
+    <label class="ck"><input type="checkbox" data-ck="${esc(key)}|al" ${c.al?"checked":""}> Alergias revisadas</label>
+    <button class="btn primary" data-listo="${esc(mesa)}|${esc(i.id)}" ${ready?"":"disabled"}>Marcar listo${i.termino?" · palillo "+esc(i.termino.toLowerCase()):""}</button></article>`}).join(""):`<div class="empty">No hay pedidos en cola. Cuando un mesero envíe un pedido desde su tablet, aparecerá aquí ordenado por tiempo de espera.</div>`;
+  const stock=ESTRELLAS.map(n=>{const v=S.stock[n];return `<div class="stockrow"><span>${esc(n)}</span><button class="btn" data-st="${esc(n)}|-1" aria-label="Restar">−</button><span class="num" style="color:${v===0?"var(--bad)":v<=3?"var(--warn)":"var(--ink)"}">${v??"—"}</span><button class="btn" data-st="${esc(n)}|1" aria-label="Sumar">+</button></div>`}).join("");
+  return `<h1>Pantalla de cocina</h1><p class="lead">La cocina recibe cada pedido con su término y las alergias de la mesa, hace el control antes de servir y actualiza el stock que ven los meseros. Verde: menos de 12 min · ámbar: 12 a 19 · rojo: 20 o más.</p>
+  <div class="grid2" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr)"><div class="kds">${kds}</div>
+  <div class="panel"><h2>Stock del día · platos estrella</h2><p class="muted" style="font-size:13px;margin:0 0 6px">Los ahumados se preparan con 48 h de anticipación. Lo que registres aquí se ve al instante en la tablet del mesero.</p>${stock}</div></div>`;
+}
+document.addEventListener("change",e=>{const k=e.target.closest("[data-ck]");if(!k)return;const [key,f]=k.dataset.ck.split("|");ctrl[key]=ctrl[key]||{};ctrl[key][f]=k.checked;render()});
+document.addEventListener("click",e=>{
+  if(view!=="cocina") return;
+  const st=e.target.closest("[data-st]"); if(st){const [n,d]=st.dataset.st.split("|");S.stock[n]=Math.max(0,(S.stock[n]||0)+parseInt(d));saveStock();return}
+  const l=e.target.closest("[data-listo]"); if(l){const [mesa,iid]=l.dataset.listo.split("|");const c=JSON.parse(JSON.stringify(S.mesas[mesa]));c.items.forEach(i=>{if(i.id===iid)i.estado="listo"});saveMesa(mesa,c);toast("Listo: el mesero recibe el aviso en su tablet")}
+});
+
+/* ---------- 4. Botón de llamado ---------- */
+function vMesa(){
+  return `<h1>Botón de llamado en la mesa</h1><p class="lead">Cada mesa tiene un pequeño dispositivo. Al presionarlo, el mesero de esa zona recibe el aviso en su tablet o reloj. Así el cliente no tiene que levantar la mano y el mozo no interrumpe cuando no se le necesita.</p>
+  <div class="tables">${MESAS.map(x=>{const l=S.llamados.find(c=>c.mesa===x.id&&(c.estado==="pendiente"||(c.estado==="atendido"&&now()-(c.atendido||0)<120000)));const st=l?(l.estado==="pendiente"?"Llamando al mesero…":"Mesero en camino ✓"):"Presiona si necesitas algo";
+    return `<div class="device ${l&&l.estado==="pendiente"?"on":""}"><div class="eyebrow">Mesa ${x.n} · ${x.zona}</div><button class="puck" data-call="${x.id}" aria-label="Llamar al mesero desde la mesa ${x.n}"><span>ALFA</span></button><div style="font-size:13px" class="${l?"":"muted"}">${st}</div></div>`}).join("")}</div>`;
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-call]");if(!b)return;if(S.llamados.some(l=>l.mesa===b.dataset.call&&l.estado==="pendiente")){toast("Tu llamado ya fue enviado");return}addTo("llamados","llamados",{mesa:b.dataset.call,estado:"pendiente"});toast("Aviso enviado al mesero de la zona")});
+
+/* ---------- 5. Hoja de evaluación ---------- */
+let ev={};
+function scale(k,from,to){return `<div class="scale" role="group">${[...Array(to-from+1)].map((_,i)=>{const v=from+i;return `<button type="button" data-ev="${k}|${v}" aria-pressed="${ev[k]===v}">${v}</button>`}).join("")}</div>`}
+function kpis(){
+  const E=S.evals; const n=E.length; if(!n) return `<div class="empty">Aún no hay hojas registradas. Al cierre del turno, se pasan aquí las hojas que llenaron los clientes.</div>`;
+  const prom=E.filter(e=>e.nps>=9).length, det=E.filter(e=>e.nps<=6).length;
+  const nps=Math.round((prom-det)/n*100); const csat=Math.round(E.filter(e=>e.csat>=4).length/n*100);
+  const acc=Math.round(E.filter(e=>e.acceso>=4).length/n*100); const pr=E.filter(e=>e.problema); const rs=pr.length?Math.round(pr.filter(e=>e.sol>=4).length/pr.length*100):null;
+  const col=(v,meta,neg)=>v==null?"":v>=meta?"var(--ok)":v>=meta-5?"var(--warn)":"var(--bad)";
+  return `<div class="kpis"><div class="kpi"><div class="v num" style="color:${col(nps,55)}">${nps>0?"+":""}${nps}</div><div class="l">NPS · meta +55</div></div><div class="kpi"><div class="v num">${csat}%</div><div class="l">Satisfechos (4 y 5)</div></div><div class="kpi"><div class="v num" style="color:${col(acc,75)}">${acc}%</div><div class="l">Acceso fácil · meta 75%</div></div><div class="kpi"><div class="v num" style="color:${col(rs,90)}">${rs==null?"—":rs+"%"}</div><div class="l">Reclamos bien resueltos · meta 90%</div></div></div>
+  <p class="eyebrow" style="margin:12px 0 6px">Últimos comentarios (${n} hojas)</p><div style="display:grid;gap:6px">${E.filter(e=>e.comentario).slice(0,6).map(e=>`<div style="border-left:3px solid var(--copper);padding-left:8px">${esc(e.comentario)} ${e.ejemplo?'<span class="tag ex">ejemplo</span>':""}</div>`).join("")}</div>`;
+}
+function vEval(){
+  const ok=ev.csat&&ev.nps!=null&&ev.acceso&&ev.problema!=null&&(!ev.problema||ev.sol);
+  return `<h1>Hoja de evaluación</h1><p class="lead">Cuatro preguntas cerradas y una abierta, que el cliente responde en menos de un minuto al recibir la cuenta. Reemplaza la encuesta de media hoja A4 y alimenta los KPIs del Termómetro ALFA.</p>
+  <div class="grid2"><form class="panel" id="evf" style="display:grid;gap:14px">
+   <div class="eyebrow">¿Cómo estuvo tu experiencia en ALFA?</div>
+   <div><b>1.</b> En general, ¿qué tan satisfecho quedaste con tu visita de hoy? <span class="muted">(1 a 5)</span>${scale("csat",1,5)}</div>
+   <div><b>2.</b> Del 0 al 10, ¿qué tan probable es que recomiendes ALFA?${scale("nps",0,10)}</div>
+   <div><b>3.</b> ¿Qué tan fácil fue llegar y estacionar? <span class="muted">(1 a 5)</span>${scale("acceso",1,5)}</div>
+   <div><b>4.</b> ¿Tuviste algún problema hoy?<div class="chips" style="margin-top:4px"><button type="button" class="chip" data-ev="problema|0" aria-pressed="${ev.problema===false}">No</button><button type="button" class="chip" data-ev="problema|1" aria-pressed="${ev.problema===true}">Sí</button></div>${ev.problema?`<div style="margin-top:6px">¿Qué tan satisfecho quedaste con la solución?${scale("sol",1,5)}</div>`:""}</div>
+   <label class="f"><span><b style="color:var(--ink)">5.</b> ¿Qué podríamos mejorar para tu próxima visita?</span><textarea id="ev_com" data-keep rows="2"></textarea></label>
+   <button class="btn primary" type="submit" ${ok?"":"disabled"}>Registrar hoja</button>
+  </form><div class="panel"><h2>Resultados del turno</h2>${kpis()}</div></div>`;
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-ev]");if(!b)return;const [k,v]=b.dataset.ev.split("|");ev[k]=k==="problema"?v==="1":parseInt(v);if(k==="problema"&&!ev.problema)delete ev.sol;render()});
+document.addEventListener("submit",e=>{if(e.target.id!=="evf")return;e.preventDefault();const com=document.getElementById("ev_com").value.trim();addTo("evaluaciones","evals",{...ev,comentario:com});ev={};const t=document.getElementById("ev_com");if(t)t.value="";toast("Hoja registrada");});
+
+/* ---------- 6. Club ALFA Corporativo ---------- */
+let clubSel=null;
+function vClub(){
+  const c=S.club.find(x=>x.id===clubSel)||S.club[0];
+  const card=c?`<div class="wallet" aria-label="Tarjeta virtual"><div class="wtop"><div><div style="font-size:11px;letter-spacing:2px;opacity:.7">CLUB</div><div class="wl">ALFA Corporativo</div></div><div style="font-size:11px;text-align:right;opacity:.8">Apple Wallet<br>Google Wallet</div></div>
+   <div><div style="font-size:12px;opacity:.7">Empresa</div><div style="font-weight:700">${esc(c.empresa)}</div><div style="font-size:12px;opacity:.7;margin-top:4px">Contacto: ${esc(c.contacto)}</div></div>
+   <div class="dots">${[1,2,3,4,5].map(i=>`<i class="${(c.visitas%5||(c.visitas>0&&c.visitas%5===0?5:0))>=i?"on":""}">${i===5?"🍸":i}</i>`).join("")}</div>
+   <div style="font-size:13px">${c.visitas%5===0&&c.visitas>0?"<b>¡Beneficio activo!</b> 2x1 en coctelería clásica en esta visita.":`Te faltan <b>${5-(c.visitas%5)}</b> visita(s) para tu 2x1 en coctelería clásica.`}</div><div class="bar" aria-hidden="true"></div></div>`:`<div class="empty">Aún no hay empresas inscritas. Inscribe la primera con el formulario.</div>`;
+  return `<h1>Club ALFA Corporativo</h1><p class="lead">Programa de lealtad para el segmento corporativo. La empresa recibe una tarjeta virtual en su billetera digital, y en caja se registra cada visita. En la quinta visita obtiene un 2x1 en coctelería clásica.</p>
+  <div class="grid2"><div class="panel" style="display:grid;gap:12px;justify-items:start">${card}
+   ${c?`<div class="row"><button class="btn primary" data-visita="${esc(c.id)}">Registrar visita en caja</button>${c.ejemplo?'<span class="tag ex">ejemplo</span>':""}</div>`:""}</div>
+  <div class="panel"><h2>Empresas inscritas</h2>${S.club.length?`<div class="scroll"><table class="t"><tr><th>Empresa</th><th>Contacto</th><th>Visitas</th></tr>${S.club.map(x=>`<tr><td><button class="btn ghost" data-csel="${esc(x.id)}" style="padding:2px 4px">${esc(x.empresa)}</button></td><td>${esc(x.contacto)}</td><td class="num">${x.visitas}</td></tr>`).join("")}</table></div>`:""}
+   <form id="clubf" style="display:grid;gap:8px;margin-top:12px"><div class="eyebrow">Inscribir empresa (con autorización)</div><input id="cl_emp" data-keep placeholder="Empresa" required><input id="cl_con" data-keep placeholder="Contacto" required><input id="cl_cel" data-keep placeholder="Celular (WhatsApp)" required><button class="btn" type="submit">Inscribir y enviar tarjeta</button></form></div></div>`;
+}
+document.addEventListener("click",e=>{
+  const v=e.target.closest("[data-visita]"); if(v){const c=S.club.find(x=>x.id===v.dataset.visita);const n=(c.visitas||0)+1;updateIn("club","club",c.id,{visitas:n});toast(n%5===0?"Quinta visita: se envía el mensaje del 2x1 por WhatsApp":n%5===4?"Se envía: «Te falta una visita para tu 2x1»":"Visita registrada");return}
+  const s=e.target.closest("[data-csel]"); if(s){clubSel=s.dataset.csel;render()}
+});
+document.addEventListener("submit",e=>{if(e.target.id!=="clubf")return;e.preventDefault();const g=id=>document.getElementById(id).value.trim();addTo("club","club",{empresa:g("cl_emp"),contacto:g("cl_con"),celular:g("cl_cel"),visitas:0});["cl_emp","cl_con","cl_cel"].forEach(i=>document.getElementById(i).value="");toast("Empresa inscrita en el Club ALFA")});
+
+/* ---------- 7. Protocolos ---------- */
+let chk={};
+function vProt(){
+  const amb=[["Ingreso","Fachada y entrada limpias; señalización visible","Anfitrión"],["Salón y terraza","Mesas limpias; mesas reservadas preparadas; botones de llamado operativos","Mozos"],["Ambiente","Iluminación, música y temperatura adecuadas","Jefe de salón"],["Baños","Limpios, con papel, jabón y secador","Limpieza"],["Cocina y parrilla","Superficies limpias, insumos rotulados, stock actualizado","Jefe de cocina"],["Barra","Vasos y copas limpios; insumos completos","Bartender"],["Materiales","Cartas, tablets cargadas y hojas de evaluación","Jefe de salón"]];
+  const done=amb.filter((_,i)=>chk[i]).length;
+  return `<h1>Protocolos de atención</h1><p class="lead">Guías para que la experiencia no dependa de quién atiende.</p>
+  <div class="grid2">
+   <div class="panel"><h2>Bienvenida · con reserva</h2><ol class="steps"><li>Saludar por el nombre de la reserva: «Buenas noches, señor/a […], bienvenido a ALFA».</li><li>Acompañar a la mesa preparada y confirmar ocasión y alergias registradas.</li><li>Presentarse por su nombre, indicar el número de mesa y los servicios higiénicos.</li><li>Informar el stock del plato estrella antes de que pidan.</li><li>Preguntar medio de pago y si usarán alguna promoción bancaria.</li></ol>
+   <h2 style="margin-top:14px">Bienvenida · sin reserva</h2><ol class="steps"><li>Saludar antes de 30 segundos: «Bienvenidos a ALFA, ¿para cuántas personas?».</li><li>Consultar mesas libres en el sistema; si hay espera, anunciar un tiempo realista y cumplirlo.</li><li>Acompañar a la mesa y seguir los pasos 3 a 5 del protocolo anterior.</li></ol></div>
+   <div class="panel"><h2>ALFA Resuelve · el mozo actúa sin pedir permiso</h2><div class="scroll"><table class="t"><tr><th>Situación</th><th>Qué hace el mozo</th><th>Máx.</th></tr>
+    <tr><td>Término distinto</td><td>Rehacer o completar en parrilla con prioridad</td><td class="num">10 min</td></tr><tr><td>Plato tibio</td><td>Recalentar o rehacer; pan de cortesía mientras</td><td class="num">10 min</td></tr><tr><td>Demora &gt; 25 min</td><td>Avisar el tiempo real e invitar bebida o entrada</td><td class="num">5 min</td></tr><tr><td>Plato agotado</td><td>Recomendar alternativa y ofrecer apartarlo</td><td class="num">5 min</td></tr><tr><td>Error en la cuenta</td><td>Corregir en el momento y disculparse</td><td class="num">5 min</td></tr><tr><td>Problema de higiene</td><td>Cambiar el plato, invitar postre, avisar a cocina</td><td class="num">10 min</td></tr></table></div></div>
+   <div class="panel" style="grid-column:1/-1"><h2>Checklist Ambiente ALFA <span class="tag ${done===amb.length?"ok":""}">${done}/${amb.length}</span></h2><div style="display:grid;gap:6px">${amb.map((a,i)=>`<label class="ck"><input type="checkbox" data-amb="${i}" ${chk[i]?"checked":""}> <b>${a[0]}:</b> ${a[1]} <span class="muted">· ${a[2]}</span></label>`).join("")}</div></div>
+  </div>`;
+}
+document.addEventListener("change",e=>{const a=e.target.closest("[data-amb]");if(a){chk[a.dataset.amb]=a.checked;render()}});
+
+/* ===================== ARRANQUE ===================== */
+demoSeed(); render();
+setInterval(()=>{ if(["cocina","mesero"].includes(view) && !document.activeElement?.matches("input,textarea,select")) render(); },30000);
+connect();
+</script>
+
+</body></html>
